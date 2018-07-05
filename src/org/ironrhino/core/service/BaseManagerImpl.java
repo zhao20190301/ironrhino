@@ -56,7 +56,8 @@ import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseManager<T> {
+public abstract class BaseManagerImpl<PK extends Serializable, T extends Persistable<PK>>
+		implements BaseManager<PK, T> {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -99,7 +100,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 		Class<?> clazz = ReflectionUtils.getActualClass(obj);
 		boolean isnew = obj.isNew();
 		if (EntityClassHelper.isIdAssigned(clazz)) {
-			Serializable id = obj.getId();
+			PK id = obj.getId();
 			if (id == null)
 				throw new IllegalArgumentException(obj + " must have an ID");
 			DetachedCriteria dc = detachedCriteria();
@@ -199,7 +200,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 		List<T> list;
 		if (id.length == 1) {
 			list = new ArrayList<>(1);
-			list.add(get(id[0]));
+			list.add(get((PK) id[0]));
 		} else {
 			DetachedCriteria dc = detachedCriteria();
 			dc.add(Restrictions.in("id", (Object[]) id));
@@ -216,7 +217,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 
 	@Override
 	@Transactional(readOnly = true)
-	public T get(Serializable id) {
+	public T get(PK id) {
 		if (id == null)
 			return null;
 		return sessionFactory.getCurrentSession().get(getEntityClass(), id);
@@ -224,7 +225,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 
 	@Override
 	@Transactional(readOnly = true)
-	public T getReference(Serializable id) {
+	public T getReference(PK id) {
 		if (id == null)
 			return null;
 		return sessionFactory.getCurrentSession().byId(getEntityClass()).getReference(id);
@@ -232,7 +233,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 
 	@Override
 	@Transactional(readOnly = true)
-	public boolean exists(Serializable id) {
+	public boolean exists(PK id) {
 		if (id == null)
 			return false;
 		CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
@@ -246,7 +247,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 
 	@Override
 	@Transactional
-	public T get(Serializable id, LockOptions lockOptions) {
+	public T get(PK id, LockOptions lockOptions) {
 		if (id == null)
 			return null;
 		return sessionFactory.getCurrentSession().get(getEntityClass(), id, lockOptions);
@@ -254,7 +255,7 @@ public abstract class BaseManagerImpl<T extends Persistable<?>> implements BaseM
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<T> get(List<? extends Serializable> ids) {
+	public List<T> get(List<PK> ids) {
 		if (ids == null)
 			return null;
 		if (ids.isEmpty())

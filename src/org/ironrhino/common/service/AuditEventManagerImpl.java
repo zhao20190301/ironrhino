@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuditEventManagerImpl extends BaseManagerImpl<AuditEvent> implements AuditEventManager {
+public class AuditEventManagerImpl extends BaseManagerImpl<String, AuditEvent> implements AuditEventManager {
 
 	@Override
 	@Transactional(readOnly = true)

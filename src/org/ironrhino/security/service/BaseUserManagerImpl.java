@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-public abstract class BaseUserManagerImpl<T extends BaseUser> extends BaseManagerImpl<T> implements BaseUserManager<T> {
+public abstract class BaseUserManagerImpl<T extends BaseUser> extends BaseManagerImpl<String, T>
+		implements BaseUserManager<T> {
 
 	@Autowired(required = false)
 	private PasswordGenerator passwordGenerator;

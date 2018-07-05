@@ -55,7 +55,7 @@ public class RegionSetup {
 	private Map<String, List<Rgn>> rgnMap;
 
 	@Autowired
-	private EntityManager<Region> entityManager;
+	private EntityManager<Long, Region> entityManager;
 
 	@Setup
 	@Async

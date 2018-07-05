@@ -8,7 +8,7 @@ import org.ironrhino.core.spring.security.password.PasswordMutator;
 import org.ironrhino.security.model.BaseUser;
 
 public interface BaseUserManager<T extends BaseUser>
-		extends BaseManager<T>, PasswordMutator<T>, ConcreteUserDetailsService<T> {
+		extends BaseManager<String, T>, PasswordMutator<T>, ConcreteUserDetailsService<T> {
 
 	default boolean accepts(String username) {
 		return ConcreteUserDetailsService.super.accepts(username);

@@ -14,7 +14,7 @@ import org.ironrhino.core.model.Persistable;
 import org.ironrhino.core.model.ResultPage;
 import org.springframework.orm.hibernate5.HibernateCallback;
 
-public interface BaseManager<T extends Persistable<?>> {
+public interface BaseManager<PK extends Serializable, T extends Persistable<PK>> {
 
 	public default DetachedCriteria detachedCriteria() {
 		return DetachedCriteria.forClass(getEntityClass());
@@ -26,15 +26,15 @@ public interface BaseManager<T extends Persistable<?>> {
 
 	public void update(T obj);
 
-	public T get(Serializable id);
+	public T get(PK id);
 
-	public T getReference(Serializable id);
+	public T getReference(PK id);
 
-	public boolean exists(Serializable id);
+	public boolean exists(PK id);
 
-	public T get(Serializable id, LockOptions lockOptions);
+	public T get(PK id, LockOptions lockOptions);
 
-	public List<T> get(List<? extends Serializable> ids);
+	public List<T> get(List<PK> ids);
 
 	public void evict(T obj);
 
