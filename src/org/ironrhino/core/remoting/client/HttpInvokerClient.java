@@ -22,6 +22,7 @@ import org.ironrhino.core.servlet.AccessFilter;
 import org.ironrhino.core.spring.FallbackSupportMethodInterceptorFactoryBean;
 import org.ironrhino.core.spring.RemotingClientProxy;
 import org.ironrhino.core.throttle.CircuitBreaking;
+import org.ironrhino.core.tracing.Tracing;
 import org.ironrhino.core.util.AppInfo;
 import org.ironrhino.core.util.CodecUtils;
 import org.ironrhino.core.util.ExceptionUtils;
@@ -195,10 +196,12 @@ public class HttpInvokerClient extends FallbackSupportMethodInterceptorFactoryBe
 
 	protected RemoteInvocationResult executeRequest(RemoteInvocation invocation, MethodInvocation methodInvocation)
 			throws Exception {
-		return circuitBreakerEnabled
-				? CircuitBreaking.execute(getServiceInterface().getName(), ex -> ex instanceof IOException,
-						() -> doExecuteRequest(invocation, methodInvocation))
-				: doExecuteRequest(invocation, methodInvocation);
+		return Tracing
+				.execute(ReflectionUtils.stringify(methodInvocation.getMethod()),
+						() -> circuitBreakerEnabled ? CircuitBreaking.execute(getServiceInterface().getName(),
+								ex -> ex instanceof IOException, () -> doExecuteRequest(invocation, methodInvocation))
+								: doExecuteRequest(invocation, methodInvocation),
+						"span.kind", "client", "component", "remoting");
 	}
 
 	protected RemoteInvocationResult doExecuteRequest(RemoteInvocation invocation, MethodInvocation methodInvocation)

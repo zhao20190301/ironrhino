@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.ironrhino.core.servlet.AccessFilter;
+import org.ironrhino.core.tracing.Tracing;
+import org.ironrhino.core.tracing.TracingClientHttpRequestInterceptor;
 import org.ironrhino.core.util.AppInfo;
 import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.MDC;
@@ -73,6 +75,8 @@ public class RestTemplate extends org.springframework.web.client.RestTemplate {
 		super();
 		setRequestFactory(requestFactory);
 		this.getInterceptors().add(new AddHeadersClientHttpRequestInterceptor());
+		if (Tracing.isEnabled())
+			this.getInterceptors().add(new TracingClientHttpRequestInterceptor());
 		Iterator<HttpMessageConverter<?>> it = getMessageConverters().iterator();
 		while (it.hasNext()) {
 			HttpMessageConverter<?> mc = it.next();

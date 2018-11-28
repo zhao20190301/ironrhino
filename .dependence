@@ -51,3 +51,4 @@
 +micrometer-core
 +micrometer-registry-influx
 +micrometer-registry-prometheus
++jaeger-all<-ironrhino-remoting-common
